@@ -1,0 +1,68 @@
+Sub AjouterMotAncrageNoteBasDePageAvecPhrasePageDateHeure()
+    Dim oDoc As Object
+    Dim oFootnotes As Object
+    Dim oNote As Object
+    Dim oAnchor As Object
+    Dim sMotAncrage As String
+    Dim sMotMajuscule As String
+    Dim sSuffixe As String
+    Dim i As Integer
+    Dim oTextNote As Object
+    Dim oCursorNote As Object
+    Dim oAnchorCursor As Object
+    Dim sPhrase As String
+    Dim sNomDocument As String
+    Dim nPage As Long
+    Dim oVC As Object
+    Dim sDateHeure As String
+    Dim sDate As String, sHeure As String
+
+    oDoc = ThisComponent
+    oFootnotes = oDoc.getFootnotes()
+    sSuffixe = " - (.): F: . M: . P: . D: ."
+
+    sNomDocument = oDoc.Title
+    If sNomDocument = "" Then sNomDocument = "Document sans titre"
+
+    oVC = oDoc.getCurrentController().getViewCursor()
+
+    ' Obtenir la date et l'heure actuelle
+    sDate = Format(Date, "YYYY-MM-DD")
+    sHeure = Format(Time, "HH:MM:SS")
+    sDateHeure = sDate & " " & sHeure
+
+    For i = 0 To oFootnotes.getCount() - 1
+        oNote = oFootnotes.getByIndex(i)
+        oAnchor = oNote.Anchor
+
+        oAnchorCursor = oDoc.Text.createTextCursorByRange(oAnchor)
+        
+        oAnchorCursor.gotoStartOfWord(False)
+        oAnchorCursor.gotoEndOfWord(True)
+        sMotAncrage = Trim(oAnchorCursor.String)
+        
+        If Len(sMotAncrage) > 0 Then
+            sMotMajuscule = UCase(Left(sMotAncrage, 1)) & Mid(sMotAncrage, 2)
+
+            oAnchorCursor.gotoStartOfSentence(False)
+            oAnchorCursor.gotoEndOfSentence(True)
+            sPhrase = Trim(oAnchorCursor.String)
+
+            oVC.gotoRange(oAnchor, False)
+            nPage = oVC.getPage()
+
+            Dim sNoteTexte As String
+            sNoteTexte = sMotMajuscule & " : " & sSuffixe
+            sNoteTexte = Replace(sNoteTexte, "F: .", "F: " & sPhrase)
+            sNoteTexte = Replace(sNoteTexte, "M: .", "M: " & sNomDocument & ".")
+            sNoteTexte = Replace(sNoteTexte, "P: .", "P: " & nPage & ".")
+            sNoteTexte = Replace(sNoteTexte, "D: .", "D: " & sDateHeure & ".")
+
+            oTextNote = oNote.getText()
+            oCursorNote = oTextNote.createTextCursor()
+            oTextNote.insertString(oCursorNote, sNoteTexte, False)
+        End If
+    Next i
+
+    MsgBox "Notes enrichies avec phrase, document, page, date et heure.", 64, "Terminé"
+End Sub
