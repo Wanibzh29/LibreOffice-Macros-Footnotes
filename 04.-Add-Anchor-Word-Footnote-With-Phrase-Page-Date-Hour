@@ -52,7 +52,7 @@ Sub AjouterMotAncrageNoteBasDePageAvecPhrasePageDateHeure()
             nPage = oVC.getPage()
 
             Dim sNoteTexte As String
-            sNoteTexte = sMotMajuscule & " : " & sSuffixe
+            sNoteTexte = sMotMajuscule & sSuffixe
             sNoteTexte = Replace(sNoteTexte, "F: .", "F: " & sPhrase)
             sNoteTexte = Replace(sNoteTexte, "M: .", "M: " & sNomDocument & ".")
             sNoteTexte = Replace(sNoteTexte, "P: .", "P: " & nPage & ".")
