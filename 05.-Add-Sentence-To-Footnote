@@ -1,0 +1,33 @@
+Sub CopyToFootnote()
+    Dim oDoc As Object
+    Dim oText As Object
+    Dim oCursor As Object
+    Dim oSelectedText As String
+    Dim oFootnote As Object
+    
+    ' Obtenez le document actif
+    oDoc = ThisComponent
+    oText = oDoc.Text
+
+    ' Créez un curseur pour le texte sélectionné
+    oCursor = oDoc.CurrentController.getViewCursor()
+
+    ' Si aucun texte n'est sélectionné, avertir l'utilisateur
+    If oCursor.isCollapsed() Then
+        MsgBox "Veuillez sélectionner un mot ou une phrase avant d'exécuter la macro.", 16, "Avertissement"
+        Exit Sub
+    End If
+
+    ' Récupérer le texte sélectionné
+    oSelectedText = oCursor.getString()
+
+    ' Créer la note de bas de page en insérant la phrase sélectionnée
+    oText.insertTextContent(oCursor, Chr(13), False) ' Ajoute un saut de ligne avant la note
+
+    ' Insérer une note de bas de page avec le texte sélectionné
+    oFootnote = oDoc.createInstance("com.sun.star.text.Footnote") ' Créer une note de bas de page
+    oText.insertTextContent(oCursor, "Note de bas de page : " & oSelectedText, False) ' Ajouter le texte à la note de bas de page
+
+    ' Avertir l'utilisateur que la phrase a été copiée
+    MsgBox "La phrase a été copiée en note de bas de page.", 64, "Succès"
+End Sub
