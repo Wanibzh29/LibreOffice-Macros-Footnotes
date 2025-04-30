@@ -1,33 +1,56 @@
-Sub CopyToFootnote()
+Sub Ajouter_Note_De_Bas_De_Pages_Selection()
     Dim oDoc As Object
     Dim oText As Object
     Dim oCursor As Object
     Dim oSelectedText As String
     Dim oFootnote As Object
-    
-    ' Obtenez le document actif
+    Dim oFootnoteText As Object
+    Dim oFootnoteCursor As Object
+    Dim oTextCursor As Object
+    Dim sDernierChar As String
+    Dim bAjouterPoint As Boolean
+
     oDoc = ThisComponent
     oText = oDoc.Text
-
-    ' Créez un curseur pour le texte sélectionné
     oCursor = oDoc.CurrentController.getViewCursor()
 
-    ' Si aucun texte n'est sélectionné, avertir l'utilisateur
     If oCursor.isCollapsed() Then
         MsgBox "Veuillez sélectionner un mot ou une phrase avant d'exécuter la macro.", 16, "Avertissement"
         Exit Sub
     End If
 
-    ' Récupérer le texte sélectionné
-    oSelectedText = oCursor.getString()
+    ' Créer un curseur texte à partir de la sélection
+    oTextCursor = oText.createTextCursorByRange(oCursor.getStart())
 
-    ' Créer la note de bas de page en insérant la phrase sélectionnée
-    oText.insertTextContent(oCursor, Chr(13), False) ' Ajoute un saut de ligne avant la note
+    ' Étendre le curseur jusqu'à la fin de la sélection
+    oTextCursor.gotoRange(oCursor.getEnd(), True)
+    oSelectedText = oTextCursor.getString()
+    sDernierChar = Right(oSelectedText, 1)
 
-    ' Insérer une note de bas de page avec le texte sélectionné
-    oFootnote = oDoc.createInstance("com.sun.star.text.Footnote") ' Créer une note de bas de page
-    oText.insertTextContent(oCursor, "Note de bas de page : " & oSelectedText, False) ' Ajouter le texte à la note de bas de page
+    bAjouterPoint = (sDernierChar <> ".")
 
-    ' Avertir l'utilisateur que la phrase a été copiée
-    MsgBox "La phrase a été copiée en note de bas de page.", 64, "Succès"
+    ' Définir la position de la note avant le point final s'il existe
+    If Not bAjouterPoint Then
+        ' Le dernier caractère est un point → placer la note juste avant
+        oCursor.goLeft(1, False)
+    Else
+        ' Sinon, placer la note après la sélection
+        oCursor.collapseToEnd()
+    End If
+
+    ' Créer et insérer la note
+    oFootnote = oDoc.createInstance("com.sun.star.text.Footnote")
+    oText.insertTextContent(oCursor, oFootnote, False)
+
+    ' Écrire dans la note
+    oFootnoteText = oFootnote.getText()
+    oFootnoteCursor = oFootnoteText.createTextCursor()
+
+    If bAjouterPoint Then
+        oFootnoteText.insertString(oFootnoteCursor, oSelectedText & ".", False)
+    Else
+        oFootnoteText.insertString(oFootnoteCursor, oSelectedText, False)
+    End If
+
+    MsgBox "Note ajoutée avant le point final. Le texte est copié dans la note avec ponctuation appropriée.", 64, "Succès"
 End Sub
