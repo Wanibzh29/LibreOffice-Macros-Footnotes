@@ -1,4 +1,4 @@
-Sub AjouterMotAncrageNoteBasDePageSimple()
+Sub Ajouter_Note_Bas_De_Page_Mot_Simple()
     Dim oDoc As Object
     Dim oFootnotes As Object
     Dim oNote As Object
