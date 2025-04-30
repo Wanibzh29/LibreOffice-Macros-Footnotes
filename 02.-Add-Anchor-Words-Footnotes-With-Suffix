@@ -1,0 +1,46 @@
+Sub AjouterMotAncrageNoteBasDePageAvecSuffixe()
+    Dim oDoc As Object
+    Dim oFootnotes As Object
+    Dim oNote As Object
+    Dim oAnchor As Object
+    Dim sMotAncrage As String
+    Dim sMotMajuscule As String
+    Dim sSuffixe As String
+    Dim i As Integer
+    Dim oTextNote As Object
+    Dim oCursorNote As Object
+    Dim oAnchorCursor As Object
+
+    oDoc = ThisComponent
+    oFootnotes = oDoc.getFootnotes()
+    sSuffixe = " - (.): . SIN: . ANT: . TL: «». T: ."
+
+    For i = 0 To oFootnotes.getCount() - 1
+        oNote = oFootnotes.getByIndex(i)
+        oAnchor = oNote.Anchor
+
+        ' Créer un curseur à partir de la position de l'ancre
+        oAnchorCursor = oDoc.Text.createTextCursorByRange(oAnchor)
+
+        ' Étendre la sélection du curseur pour sélectionner le mot entier
+        oAnchorCursor.gotoStartOfWord(False)
+        oAnchorCursor.gotoEndOfWord(True)
+
+        ' Récupérer le texte sélectionné (le mot d'ancrage)
+        sMotAncrage = Trim(oAnchorCursor.String)
+
+        If Len(sMotAncrage) > 0 Then
+            ' Mettre la première lettre en majuscule
+            sMotMajuscule = UCase(Left(sMotAncrage, 1)) & Mid(sMotAncrage, 2)
+
+            oTextNote = oNote.getText()
+            oCursorNote = oTextNote.createTextCursor()
+
+            ' Insérer le mot avec majuscule et le suffixe
+            oTextNote.insertString(oCursorNote, sMotMajuscule & " : " & sSuffixe, False)
+        End If
+    Next i
+
+    MsgBox "Le mot d'ancrage avec majuscule et le suffixe ont été ajoutés au début de chaque note de bas de page.", 64, "Opération terminée"
+
+End Sub
