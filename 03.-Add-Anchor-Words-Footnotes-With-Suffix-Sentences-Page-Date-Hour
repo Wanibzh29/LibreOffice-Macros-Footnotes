@@ -1,4 +1,4 @@
-Sub AjouterMotAncrageNoteBasDePageAvecSuffixePhrasePageDateHeure()
+Sub Ajouter_Note_Bas_De_Mot_Page_Suffixe_Phrase_Page_Date_Heure()
     Dim oDoc As Object
     Dim oFootnotes As Object
     Dim oNote As Object
@@ -27,7 +27,7 @@ Sub AjouterMotAncrageNoteBasDePageAvecSuffixePhrasePageDateHeure()
     oVC = oDoc.getCurrentController().getViewCursor()
 
     ' Obtenir la date et l'heure actuelle
-    sDate = Format(Date, "YYYY-MM-DD")
+    sDate = Format(Date, "DD-MM-YYYY")
     sHeure = Format(Time, "HH:MM:SS")
     sDateHeure = sDate & " " & sHeure
 
@@ -52,7 +52,7 @@ Sub AjouterMotAncrageNoteBasDePageAvecSuffixePhrasePageDateHeure()
             nPage = oVC.getPage()
 
             Dim sNoteTexte As String
-            sNoteTexte = sMotMajuscule & sSuffixe
+            sNoteTexte = sMotMajuscule & " : " & sSuffixe
             sNoteTexte = Replace(sNoteTexte, "F: .", "F: " & sPhrase)
             sNoteTexte = Replace(sNoteTexte, "M: .", "M: " & sNomDocument & ".")
             sNoteTexte = Replace(sNoteTexte, "P: .", "P: " & nPage & ".")
