@@ -37,7 +37,7 @@ Sub AjouterMotAncrageNoteBasDePageAvecSuffixe()
             oCursorNote = oTextNote.createTextCursor()
 
             ' Insérer le mot avec majuscule et le suffixe
-            oTextNote.insertString(oCursorNote, sMotMajuscule & " : " & sSuffixe, False)
+            oTextNote.insertString(oCursorNote, sMotMajuscule & sSuffixe, False)
         End If
     Next i
 
