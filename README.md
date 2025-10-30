@@ -9,7 +9,5 @@ poellgor@bedniverel.bzh - https://bedniverel.bzh
 
 - Contact of the project owner: per.morvan.bzh29@gmail.com.
 
-- Contact of the project owner: per.morvan.bzh29@gmail.com.
-
 ## II. Descriptions (todo)
 Made with the help of the AIs ChatGPT, Gemini, Perplexity.
